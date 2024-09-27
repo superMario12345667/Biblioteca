@@ -1,0 +1,56 @@
+﻿@page "/libros"
+@using Biblioteca.DTO
+@using Biblioteca.Services
+
+<h3>Lista de Libros</h3>
+@if (libros == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Titulo</th>
+            <th>Id Autor</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var libro in libros)
+        {
+            <tr>
+                <td>@libro.Titulo</td>
+                <td>@libro.IdAutor</td>
+                <td>@libro.Estado</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+
+@inject LibroService libroService
+@code {
+    private List<LibroResponse> libros;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            libros = await libroService.GetLibros();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+}

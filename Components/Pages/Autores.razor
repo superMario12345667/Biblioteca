@@ -1,0 +1,59 @@
+﻿@page "/autores"
+@using Biblioteca.DTO
+@using Biblioteca.Services
+
+<h3>Lista de Autores</h3>
+
+@if (autores == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Nacionalidad</th>
+            <th>Fecha de nacimiento</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var autor in autores)
+        {
+            <tr>
+                <td>@autor.Nombre</td>
+                <td>@autor.Nacionalidad</td>
+                <td>@autor.FechaNacimiento</td>
+                <td>@autor.Estado</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+
+@inject AutorService autorService
+@code {
+    private List<AutorResponse> autores;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            autores = await autorService.GetAutores();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+}
