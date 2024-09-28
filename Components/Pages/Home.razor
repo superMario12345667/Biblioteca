@@ -32,6 +32,27 @@
     private UsuarioSession usuarioSession = new UsuarioSession();
     private string errorMessage;
 
+    private bool isAuthenticated;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            isAuthenticated = await authService.IsAuthenticated();
+
+            if (isAuthenticated)
+            {
+                navigationManager.NavigateTo("/counter");
+            }
+            else
+            {
+                navigationManager.NavigateTo("/");
+            }
+
+            StateHasChanged();
+        }
+    }
+
     private async Task Login()
     {
         var token = await authService.Login(usuarioSession);
@@ -42,6 +63,6 @@
         }
 
         await authService.SetToken(token);
-        navigationManager.NavigateTo("/weather");
+        navigationManager.NavigateTo("/weather", true);
     }
 }
