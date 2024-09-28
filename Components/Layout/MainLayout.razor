@@ -1,23 +1,54 @@
-﻿@inherits LayoutComponentBase
+﻿@using Biblioteca.Services;
+@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+	@if (isAuthenticated)
+	{
+		<div class="sidebar">
+			<NavMenu />
+		</div>
+	}
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+	<main>
+		<div class="top-row px-4">
+			@if (isAuthenticated)
+			{
+				<a href="#" @onclick="Logout">Cerrar Sesión</a>
+			}
+		</div>
+
+		<article class="content px-4">
+			@Body
+		</article>
+	</main>
 </div>
 
 <div id="blazor-error-ui">
-    An unhandled error has occurred.
-    <a href="" class="reload">Reload</a>
-    <a class="dismiss">🗙</a>
+	An unhandled error has occurred.
+	<a href="" class="reload">Reload</a>
+	<a class="dismiss">🗙</a>
 </div>
+
+@inject NavigationManager navigationManager
+@inject AuthService authService
+
+@code {
+	private bool isAuthenticated;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			isAuthenticated = await authService.IsAuthenticated();
+
+			StateHasChanged();
+		}
+	}
+
+	private async Task Logout()
+	{
+		await authService.logout();
+		navigationManager.NavigateTo("/");
+	}
+}
