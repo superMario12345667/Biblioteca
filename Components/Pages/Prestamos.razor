@@ -1,0 +1,62 @@
+﻿@page "/prestamos"
+@using Biblioteca.DTO
+@using Biblioteca.Services
+
+<h3>Lista de Préstamos</h3>
+
+@if (prestamos == null)
+{
+    <p><em>Cargando...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>IdPrestamo</th>
+                <th>IdUsuario</th>
+                <th>IdLibro</th>
+                <th>FechaPrestamo</th>
+                <th>FechaDevolucion</th>
+                <th>IdEstadoPrestam</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var prestamo in prestamos)
+            {
+                <tr>
+                    <td>@prestamo.IdPrestamo</td>
+                    <td>@prestamo.IdUsuario</td>
+                    <td>@prestamo.IdLibro</td>
+                    <td>@prestamo.FechaPrestamo</td>
+                    <td>@prestamo.FechaDevolucion</td>
+                    <td>@prestamo.IdEstadoPrestamo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@inject PrestamoService prestamoService
+
+@code {
+    private List<PrestamoResponse> prestamos;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            prestamos = await prestamoService.GetPrestamos();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}
