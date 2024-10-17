@@ -12,7 +12,7 @@
 
     <div class="mb-3">
         <label class="form-label">Contraseña</label>
-        <InputText class="form-control" @bind-Value="usuarioSession.Contraseña" />
+        <InputText type="password" class="form-control" @bind-Value="usuarioSession.Contraseña" />
     </div>
 
     <button type="submit" class="btn btn-primary">Login</button>
@@ -55,14 +55,21 @@
 
     private async Task Login()
     {
-        var token = await authService.Login(usuarioSession);
-        if (string.IsNullOrEmpty(token))
+        try
         {
-            errorMessage = "Credenciales incorrectas";
-            return;
-        }
+            var token = await authService.Login(usuarioSession);
+            if (string.IsNullOrEmpty(token))
+            {
+                errorMessage = "Credenciales incorrectas";
+                return;
+            }
 
-        await authService.SetToken(token);
-        navigationManager.NavigateTo("/weather", true);
+            await authService.SetToken(token);
+            navigationManager.NavigateTo("/weather", true);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Ocurrió un error: " + ex.Message;
+        }
     }
 }
